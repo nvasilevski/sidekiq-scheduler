@@ -64,7 +64,7 @@ module SidekiqScheduler
       if args.is_a?(Array)
         klass.new(*args)
       else
-        klass.new(args)
+        klass.new(**args)
       end
     end
 
@@ -83,7 +83,9 @@ module SidekiqScheduler
         queue: config['queue']
       }.keep_if { |_, v| !v.nil? }
 
-      initialize_active_job(config['class'], config['args']).enqueue(options)
+
+      #initialize_active_job(config['class'], config['args']).enqueue(options)
+      config['class'].set(**options).perform_later(**config['args'])
     end
 
     # Removes the hash values associated to the rufus metadata keys.
